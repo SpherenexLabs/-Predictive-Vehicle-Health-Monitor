@@ -611,6 +611,12 @@ HTML_PAGE = r"""
             inset: 0;
         }
 
+        #threeCanvas canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
         .summary {
             padding: 20px;
             display: flex;
@@ -1466,12 +1472,17 @@ HTML_PAGE = r"""
         function resizeThree() {
             const w = holder.clientWidth;
             const h = holder.clientHeight;
-            renderer.setSize(w, h, false);
+            if (!w || !h) return;
+            renderer.setSize(w, h);
             camera.aspect = w / h;
             camera.updateProjectionMatrix();
         }
 
         window.addEventListener("resize", resizeThree);
+        window.addEventListener("orientationchange", resizeThree);
+        if (window.ResizeObserver) {
+            new ResizeObserver(resizeThree).observe(holder);
+        }
         resizeThree();
 
         function animateThree() {
